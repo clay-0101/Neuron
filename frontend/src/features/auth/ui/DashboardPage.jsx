@@ -1,47 +1,176 @@
-import { LogOut, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowLeft, FolderKanban, LibraryBig, MessageSquareText, Settings } from "lucide-react";
 import { useAuth } from "../hooks/useAuth.js";
-import { BrandMark } from "./BrandMark.jsx";
+import { CommandPalette } from "./CommandPalette.jsx";
+import { WorkspaceHome } from "./WorkspaceHome.jsx";
+import { WorkspaceSidebar } from "./WorkspaceSidebar.jsx";
+import { WorkspaceTopBar } from "./WorkspaceTopBar.jsx";
+
+const sectionInfo = {
+  Chats: {
+    icon: MessageSquareText,
+    description: "Your conversations will appear here after you start a chat.",
+  },
+  Projects: {
+    icon: FolderKanban,
+    description: "Give your ideas a home. Projects are coming together here.",
+  },
+  Library: {
+    icon: LibraryBig,
+    description: "Your saved notes and documents will live in your library.",
+  },
+  Settings: {
+    icon: Settings,
+    description: "Your workspace preferences will be available here.",
+  },
+};
+
+function WorkspaceSection({ section, onGoHome }) {
+  const details = sectionInfo[section];
+  const Icon = details.icon;
+
+  return (
+    <motion.section
+      className="workspace-section-empty"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.28, ease: "easeOut" }}
+      aria-labelledby="workspace-section-title"
+    >
+      <span className="workspace-section-empty-icon"><Icon size={21} strokeWidth={1.6} /></span>
+      <p className="workspace-eyebrow">YOUR WORKSPACE</p>
+      <h1 id="workspace-section-title" className="font-editorial">{section}</h1>
+      <p>{details.description}</p>
+      <button type="button" className="workspace-back-button" onClick={onGoHome}>
+        <ArrowLeft size={16} /> Back to home
+      </button>
+    </motion.section>
+  );
+}
 
 export function DashboardPage() {
   const { user, logout, status } = useAuth();
+  const [theme, setTheme] = useState("dark");
+  const [activeSection, setActiveSection] = useState("Home");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [recentActivity, setRecentActivity] = useState([]);
+  const firstName = useMemo(
+    () => user?.name?.trim().split(/\s+/)[0] || "there",
+    [user?.name],
+  );
+
+  const closeCommandPalette = useCallback(() => setCommandOpen(false), []);
+
+  useEffect(() => {
+    function handleShortcut(event) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen(true);
+      } else if (event.key === "Escape") {
+        setCommandOpen(false);
+        setMobileSidebarOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
+
+  function startNewChat() {
+    setActiveSection("Home");
+    setDraft("");
+    setMobileSidebarOpen(false);
+  }
+
+  function handleSend(prompt, fileName) {
+    setRecentActivity((items) => [
+      {
+        id: `${Date.now()}`,
+        title: prompt,
+        description: fileName ? `New chat · ${fileName}` : "New chat",
+        time: "Just now",
+      },
+      ...items,
+    ].slice(0, 5));
+    setDraft("");
+    setActiveSection("Home");
+  }
+
+  function handleQuickAction(action) {
+    setActiveSection("Home");
+    if (action === "new-chat") {
+      setDraft("");
+    } else if (action === "summarize") {
+      setDraft("Summarize this document");
+    } else if (action === "explore") {
+      setDraft("Help me explore a fresh idea");
+    }
+  }
+
+  function handleCommand(command) {
+    if (command === "toggle-theme") {
+      setTheme((current) => current === "dark" ? "light" : "dark");
+      return;
+    }
+    if (command === "new-chat") {
+      startNewChat();
+      return;
+    }
+    setActiveSection(command);
+  }
 
   return (
-    <main className="min-h-screen bg-canvas px-6 py-6 text-ink sm:px-10 lg:px-14">
-      <header className="mx-auto flex max-w-6xl items-center justify-between">
-        <BrandMark />
-        <button
-          type="button"
-          onClick={logout}
-          disabled={status === "loading"}
-          className="inline-flex items-center gap-2 rounded-full border border-[#363636] bg-[#1e1e1e] px-4 py-2.5 text-sm text-[#c8c8c8] transition-colors hover:border-[#555] hover:text-ink disabled:opacity-60"
-        >
-          <LogOut size={16} />
-          Sign out
-        </button>
-      </header>
-      <section className="mx-auto flex min-h-[75vh] max-w-6xl items-center">
-        <div className="max-w-2xl">
-          <div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl border border-[#363636] bg-[#1e1e1e] text-ink">
-            <Sparkles size={22} />
-          </div>
-          <p className="text-sm text-muted">Your space is ready</p>
-          <h1 className="mt-3 text-4xl font-normal tracking-[-0.055em] text-ink sm:text-6xl">
-            Good to see you, {user?.name}.
-          </h1>
-          <p className="mt-5 max-w-lg text-base leading-7 text-muted">
-            You’re signed in to Neuron. Your AI workspace is ready for what comes next.
-          </p>
-          <div className="mt-9 inline-flex items-center gap-3 rounded-2xl border border-[#303030] bg-surface px-5 py-4">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-[#303030] text-sm font-medium text-ink">
-              {user?.name?.slice(0, 1).toUpperCase()}
-            </span>
-            <span>
-              <span className="block text-sm font-semibold text-ink">{user?.name}</span>
-              <span className="mt-0.5 block text-xs text-muted">{user?.email}</span>
-            </span>
-          </div>
+    <div className={`workspace-shell ${sidebarCollapsed ? "is-sidebar-collapsed" : ""}`} data-theme={theme}>
+      <div className="workspace-noise" aria-hidden="true" />
+      <div className="workspace-app-shell">
+        <WorkspaceSidebar
+          user={user}
+          recentChats={recentActivity}
+          activeSection={activeSection}
+          onNavigate={setActiveSection}
+          onSignOut={logout}
+          signOutBusy={status === "loading"}
+          collapsed={sidebarCollapsed}
+          onToggleCollapsed={() => setSidebarCollapsed((collapsed) => !collapsed)}
+          mobileOpen={mobileSidebarOpen}
+          onClose={() => setMobileSidebarOpen(false)}
+        />
+        <div className="workspace-main-column">
+          <WorkspaceTopBar
+            user={user}
+            theme={theme}
+            onToggleTheme={() => setTheme((current) => current === "dark" ? "light" : "dark")}
+            onOpenSearch={() => setCommandOpen(true)}
+            onOpenSidebar={() => setMobileSidebarOpen(true)}
+            onSignOut={logout}
+          />
+          <main className="workspace-main-content">
+            {activeSection === "Home" ? (
+              <WorkspaceHome
+                firstName={firstName}
+                draft={draft}
+                onDraftChange={setDraft}
+                onSend={handleSend}
+                recentActivity={recentActivity}
+                loading={status === "loading"}
+                onQuickAction={handleQuickAction}
+                onStartChat={() => setActiveSection("Chats")}
+              />
+            ) : (
+              <WorkspaceSection section={activeSection} onGoHome={startNewChat} />
+            )}
+          </main>
         </div>
-      </section>
-    </main>
+      </div>
+      <CommandPalette
+        open={commandOpen}
+        onClose={closeCommandPalette}
+        onSelect={handleCommand}
+      />
+    </div>
   );
 }

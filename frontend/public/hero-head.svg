@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" fill="none">
+  <defs>
+    <linearGradient id="stone" x1="120" y1="170" x2="458" y2="610" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9D7D1"/>
+      <stop offset=".48" stop-color="#B8B6B0"/>
+      <stop offset="1" stop-color="#85847F"/>
+    </linearGradient>
+    <linearGradient id="shade" x1="184" y1="236" x2="405" y2="444" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#383936" stop-opacity=".32"/>
+    </linearGradient>
+    <radialGradient id="bowl" cx="0" cy="0" r="1" gradientTransform="matrix(0 53 -125 0 300 139)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#252624"/>
+      <stop offset=".75" stop-color="#4B4B47"/>
+      <stop offset="1" stop-color="#A7A59F"/>
+    </radialGradient>
+    <pattern id="dots" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.25" fill="#343532" fill-opacity=".72"/>
+    </pattern>
+    <pattern id="fineDots" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r=".75" fill="#F6F4EF" fill-opacity=".48"/>
+    </pattern>
+    <clipPath id="bust">
+      <path d="M142 155c-1 75 4 139 24 198 18 54 46 92 87 121v50c-52 4-101 18-132 44-31 25-48 65-53 118h464c-5-53-22-93-53-118-31-26-80-40-132-44v-50c41-29 69-67 87-121 20-59 25-123 24-198H142Z"/>
+    </clipPath>
+    <filter id="softShadow" x="30" y="52" width="540" height="630" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="11"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="300" cy="659" rx="211" ry="15" fill="#222" fill-opacity=".14" filter="url(#softShadow)"/>
+  <path d="M142 155c-1 75 4 139 24 198 18 54 46 92 87 121v50c-52 4-101 18-132 44-31 25-48 65-53 118h464c-5-53-22-93-53-118-31-26-80-40-132-44v-50c41-29 69-67 87-121 20-59 25-123 24-198H142Z" fill="url(#stone)"/>
+  <path d="M142 155c-1 75 4 139 24 198 18 54 46 92 87 121v50c-52 4-101 18-132 44-31 25-48 65-53 118h464c-5-53-22-93-53-118-31-26-80-40-132-44v-50c41-29 69-67 87-121 20-59 25-123 24-198H142Z" fill="url(#dots)" clip-path="url(#bust)"/>
+  <path d="M142 155c-1 75 4 139 24 198 18 54 46 92 87 121v50c-52 4-101 18-132 44-31 25-48 65-53 118h464c-5-53-22-93-53-118-31-26-80-40-132-44v-50c41-29 69-67 87-121 20-59 25-123 24-198H142Z" fill="url(#shade)" clip-path="url(#bust)"/>
+  <path d="M144 154c0-22 70-41 156-41s156 19 156 41-70 42-156 42-156-20-156-42Z" fill="#8C8B84"/>
+  <path d="M158 148c0-17 63-31 142-31s142 14 142 31-63 31-142 31-142-14-142-31Z" fill="url(#bowl)"/>
+  <path d="M144 154c0 23 70 42 156 42s156-19 156-42" stroke="#E8E6DF" stroke-opacity=".8" stroke-width="5"/>
+  <path d="M183 278c17-13 39-16 58-8m118 0c19-8 41-5 58 8" stroke="#545550" stroke-opacity=".68" stroke-width="7" stroke-linecap="round"/>
+  <path d="M198 302c14-8 29-8 43 0m118 0c14-8 29-8 43 0" stroke="#454642" stroke-opacity=".68" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300 294c-1 35-10 73-25 98 15 9 32 10 50 2" stroke="#5B5B55" stroke-opacity=".68" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M260 431c24 13 56 13 80 0" stroke="#4E4F4A" stroke-opacity=".75" stroke-width="6" stroke-linecap="round"/>
+  <path d="M107 648c14-72 74-110 142-123m244 123c-14-72-74-110-142-123" stroke="#F0EEE8" stroke-opacity=".45" stroke-width="4"/>
+  <path d="M154 199c4 78 17 141 44 185 19 31 43 53 73 70" stroke="url(#fineDots)" stroke-width="19" stroke-linecap="round" opacity=".8"/>
+</svg>
