@@ -33,3 +33,8 @@ export async function updateConversationActivity(conversationId, userId, lastMes
     { new: true, runValidators: true },
   );
 }
+
+
+export async function findConversationByUserId(userId){
+  return ConversationModel.find({user : userId})
+}

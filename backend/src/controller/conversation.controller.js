@@ -1,9 +1,10 @@
-import { createConversation, findConversationById } from "../DAO/conversation.dao.js"
+import { createConversation, findConversationById, findConversationByUserId } from "../DAO/conversation.dao.js"
 import { generateTitle } from "../services/Ai/ai-title.service.js"
 import { AppError } from "../utils/AppError.js"
 import { createMessage, findMessagesByConversationId } from "../DAO/message.dao.js"
 import { AIMessage, HumanMessage } from "langchain"
 import model from "../services/Ai/main.service.js"
+import { sendSuccess } from "../utils/apiResponse.js"
 
 export async function handleMessage(req , res , next) {
     
@@ -81,4 +82,34 @@ export async function handleMessage(req , res , next) {
         content : aiChunk.content ,
         conversation : conversation.id
     })
+}
+
+export async function getAllConversation(req, res ) {
+
+    let user = req.user
+    
+    let conversation = await findConversationByUserId(user.id)
+
+    return sendSuccess(res , 200 , "Conversation fetched successfully", {conversation})
+
+
+}
+
+export async function getMessagesByConversation(req, res, next){
+    
+    let {conversationId}  = req.params
+
+    let user = req.user
+
+    let conversation  = await findConversationByUserId(conversationId , user.id)
+
+    if(!conversation) {
+        return next(new AppError(404 , "Conversation not found"))
+    }
+
+    const messages = await findMessagesByConversationId(conversation.id)
+
+    return sendSuccess(res , 200 , "Messages fetched successfully", { messages })
+
+
 }
